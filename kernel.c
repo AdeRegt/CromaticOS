@@ -8,12 +8,14 @@ void puts(char* string);
 // Gebruikt voor alle onderdelen in te stellen
 //
 void kernel_main(){
-	puts("Welkom bij CromaticOS, een besturingssysteem gemaakt door Sander en Sebastiaan");
+	puts("Welkom bij CromaticOS, een besturingssysteem gemaakt door:\nSander\nSebastiaan");
 }
 
 
 unsigned int internecursorpointer = 0;
 unsigned char* grafischgeheugenpointer = (unsigned char*) 0xb8000;
+int curX = 0;
+int curY = 0;
 //
 // putc
 // plaats karakter op internecursorlocatie in het geheugen
@@ -21,8 +23,19 @@ unsigned char* grafischgeheugenpointer = (unsigned char*) 0xb8000;
 // byte1: karakter om te printen
 // byte2: kleuren om in te printen, 0x?0 foreground 0x0? background
 void putc(char a){
-	grafischgeheugenpointer[internecursorpointer++] = a; // karakter printen
-	grafischgeheugenpointer[internecursorpointer++] = 0x07; // grafische eigenschappen printen
+	if(a=='\n'){
+		curX = 0;
+		curY++;
+	}else{
+		internecursorpointer = (curX*2)+(curY*160);
+		grafischgeheugenpointer[internecursorpointer++] = a; // karakter printen
+		grafischgeheugenpointer[internecursorpointer++] = 0x07; // grafische eigenschappen printen
+		curX++;
+		if(curX==80){
+			curX = 0;
+			curY++;
+		}
+	}
 }
 
 //
