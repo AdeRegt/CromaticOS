@@ -1,6 +1,7 @@
 void kernel_main();
 void putc(char a);
 void puts(char* string);
+void printf(char* args,...);
 
 //
 // kernel_main:
@@ -8,7 +9,7 @@ void puts(char* string);
 // Gebruikt voor alle onderdelen in te stellen
 //
 void kernel_main(){
-	puts("Welkom bij CromaticOS, een besturingssysteem gemaakt door:\nSander\nSebastiaan");
+	printf("Welkom bij CromaticOS, een besturingssysteem gemaakt door:\n%s\n%s\n\nHet systeem word geladen...","Sander","Sebastiaan");
 }
 
 
@@ -48,3 +49,32 @@ void puts(char* string){
 		putc(deze);
 	}
 } 
+
+#include <stdarg.h>
+//
+// printf
+// print een string en formateert hem tegelijk. 
+// geaccepteerde formaten:
+// %s	String	print een string
+
+void printf(char* args,...){
+	va_list parameters;
+	va_start(parameters, args);
+	char deze = 0x00;
+	int pointer = 0;
+	while((deze = args[pointer++])!=0x00){
+		if(deze=='%'){
+			deze = args[pointer++];
+			if(deze=='%'){
+				// ignore
+				putc('%');
+			}else if(deze=='s'){
+				char* str = va_arg(parameters, char*);
+				puts(str);
+			}
+		}else{
+			putc(deze);
+		}
+	}
+	va_end(parameters);
+}
